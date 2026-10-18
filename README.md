@@ -19,11 +19,11 @@
 </p>
 
 <p align="center">
-  <a href="#installation">Installation</a> ·
-  <a href="#usage">Usage</a> ·
+  <a href="#quick-start">Quick start</a> ·
   <a href="#domain-kits">Domain kits</a> ·
-  <a href="#how-it-works">How it works</a> ·
-  <a href="#the-spec">The spec</a> ·
+  <a href="#usage">Usage</a> ·
+  <a href="#install-options">Install options</a> ·
+  <a href="#learn-more">Learn more</a> ·
   <a href="#contributing">Contributing</a> ·
   <a href="#troubleshooting">Troubleshooting</a>
 </p>
@@ -33,31 +33,45 @@
 </p>
 
 <p align="center">
-  <sub>Built from the public <a href="https://www.kaggle.com/datasets/vivek468/superstore-dataset-final">Sample Superstore dataset on Kaggle</a> (5,009 orders). Recorded in headless Chromium from the file in <a href="examples/superstore-3d.html"><code>examples/</code></a>.</sub>
+  <sub>Built from the public <a href="https://www.kaggle.com/datasets/vivek468/superstore-dataset-final">Sample Superstore dataset on Kaggle</a> (5,009 orders). Recorded in headless Chromium from <a href="examples/superstore-3d.html"><code>examples/superstore-3d.html</code></a>.</sub>
 </p>
 
 ---
 
-## Why
+## Quick start
 
-Every business dashboard ends up as the same bars and lines. This skill treats the business as a place instead. Your goods sit on shelves, your deliveries drive down a road, your customers walk around. Click anything and the camera flies in to show its numbers.
+**1. Install** (Claude Code):
 
-You give your AI assistant a CSV or Excel file. It reads the data, picks the right kind of world, finds something real in the numbers, and hands back one `.html` file. No server, no build step, no charting code to write.
+```bash
+git clone https://github.com/techwithprateek/3d-dashboard-skill.git ~/.claude/skills/data-world-3d
+```
 
-## What you get
+**2. Ask**, in a new Claude Code session:
 
-- **One prompt, one file.** Ask in plain language. The result opens in any modern browser.
-- **8 domain kits.** The world looks like your industry: a store, a hospital, a data center, a factory, a city, a restaurant, a campus or a wind farm.
-- **A real layout.** Each world is a line of three places along one road, such as warehouse, store, customers, with vehicles driving between them.
-- **Your columns become objects.** Things you hold become shelves, racks or beds. Places and channels become vehicles. Process steps become dock bays or desks. Customer groups become people.
+```
+Use data-world-3d on my-data.csv
+```
+
+**3. Open** the `my-data-3d.html` file it creates in any browser. Click anything.
+
+You need Python 3.9+ with pandas (`pip install pandas`, plus `openpyxl` for Excel files) and a browser with an internet connection. Not using Claude Code? See [Install options](#install-options).
+
+## What it does
+
+You give your AI assistant a CSV or Excel file. It reads the data, picks a world that fits your industry, finds something real in the numbers, and hands back one `.html` file. No server, no build step, no charting code.
+
+- **Your business becomes a place.** Things you hold become shelves, racks or beds. Places and channels become vehicles driving down a road. Process steps become dock bays or desks. Customer groups become people.
 - **One health metric colors everything.** Profit margin, readmission rate, churn, defect rate. Red to blue, so you see problems before you read a number.
-- **Accessible color.** The red to blue scale works for colorblind viewers, and every label also carries an arrow and its value.
-- **Honest numbers.** Every value on a card comes from your data. Nothing is invented, and the sign shows a finding the data supports.
-- **Responsive.** Cards become a bottom sheet on phones. Reduced-motion settings are respected.
+- **Click anything.** The camera flies in and opens a card with the numbers and a plain-language insight.
+- **Honest and accessible.** Every value comes from your data. Colors work for colorblind viewers, and labels also carry an arrow and the value.
+
+<p align="center">
+  <img src="docs/card.jpg" alt="The card for the Tables shelf: a Losing money pill, sales, profit, margin and discount, and a one-line insight" width="900">
+</p>
 
 ## Domain kits
 
-Every kit is a line of three places along one road. The same spec works in every kit, so you can switch the look with one flag. The images below use the same Superstore data in each kit so they are easy to compare. With real hospital or factory data the labels would match the domain.
+Every kit is a line of three places along one road, with vehicles driving between them. The same spec works in every kit, so you can switch the look with one flag. The images use the same Superstore data in each kit so they are easy to compare. With real hospital or factory data the labels would match the domain.
 
 <p align="center">
   <img src="docs/domains.jpg" alt="The eight domain kits: retail, data center, healthcare, factory, city, restaurant, campus and energy" width="900">
@@ -74,15 +88,109 @@ Every kit is a line of three places along one road. The same spec works in every
 | `education` | schools, universities, edtech | homes, school, sports field | classrooms | buses | students |
 | `energy` | utilities, climate, agriculture | solar field, wind farm, town | wind turbines | service trucks | technicians |
 
-## Click anything
+## Usage
 
-Hover for a name. Click and the camera flies in, follows moving objects, and opens a card with the numbers and a plain-language insight.
+Just describe what you want:
 
-<p align="center">
-  <img src="docs/card.jpg" alt="The card for the Tables shelf: a Losing money pill, sales, profit, margin and discount, and a one-line insight" width="900">
-</p>
+```
+Turn orders.csv into a 3D world. Color it by profit margin.
 
-## How it works
+Make a 3D hospital from patients.xlsx. Lower readmission rate is better.
+
+Make a 3D world from this Kaggle dataset: olistbr/brazilian-ecommerce
+
+Same data, but show it as a city instead of a store.
+```
+
+In Claude Code you can also type `/data-world-3d`.
+
+What happens next:
+
+1. The assistant profiles the file and tells you which kit it picked and why.
+2. It states the health metric and which column feeds shelves, vehicles, desks and people.
+3. It builds the page and checks that it runs.
+4. It tells you what each object stands for, the finding on the sign, and anything it left out.
+
+## Install options
+
+<details>
+<summary><b>Claude Code: project-only install and updating</b></summary>
+
+&nbsp;
+
+Install for one project only, run from your project root:
+
+```bash
+git clone https://github.com/techwithprateek/3d-dashboard-skill.git .claude/skills/data-world-3d
+```
+
+Update an install later:
+
+```bash
+git -C ~/.claude/skills/data-world-3d pull
+```
+
+The folder must be named `data-world-3d`.
+
+</details>
+
+<details>
+<summary><b>Claude Desktop and claude.ai</b></summary>
+
+&nbsp;
+
+1. Clone the repo, then zip **only the skill files**, not the whole checkout:
+   ```bash
+   git clone https://github.com/techwithprateek/3d-dashboard-skill.git data-world-3d
+   cd data-world-3d
+   zip -r ../data-world-3d.zip SKILL.md assets scripts references examples
+   ```
+2. Open **Settings → Capabilities → Skills** and upload `data-world-3d.zip`. Menu names change from time to time, so look for the Skills section.
+3. Turn on code execution and file creation. The skill runs Python to aggregate your data.
+4. Attach your data file and ask: "Turn this into a 3D world with the data-world-3d skill." Download the HTML file Claude creates and open it in your browser.
+
+</details>
+
+<details>
+<summary><b>Other AI assistants (Cursor, Windsurf, Codex CLI, Continue and more)</b></summary>
+
+&nbsp;
+
+The skill is plain Markdown plus scripts in the standard `SKILL.md` layout. If your tool supports skills, clone the repo into its skills directory as `data-world-3d`:
+
+| Tool | Skills directory |
+| --- | --- |
+| Cursor | `.cursor/skills/` or `~/.cursor/skills/` |
+| Windsurf | `.windsurf/skills/` |
+| Codex CLI, Antigravity and other agents using the shared standard | `.agents/skills/` or `~/.agents/skills/` |
+| Continue | `.continue/skills/` |
+| Droid (Factory) | `.factory/skills/` |
+
+For example:
+
+```bash
+git clone https://github.com/techwithprateek/3d-dashboard-skill.git ~/.agents/skills/data-world-3d
+```
+
+These paths follow the conventions other skill packs use. If your tool differs, check its documentation. If it has no skill support at all, clone the repo into your project and tell the assistant: "Read `data-world-3d/SKILL.md` and follow it for `my-data.csv`."
+
+</details>
+
+<details>
+<summary><b>No assistant at all</b></summary>
+
+&nbsp;
+
+The scripts run on their own. See the command line steps under [Learn more](#learn-more).
+
+</details>
+
+## Learn more
+
+<details>
+<summary><b>How it works</b></summary>
+
+&nbsp;
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -120,8 +228,6 @@ Hover for a name. Click and the camera flies in, follows moving objects, and ope
                      my-world.html  (open it)
 ```
 
-### What the plan looks like
-
 For the Superstore data above, the assistant produces a plan like this before it builds anything:
 
 ```
@@ -151,135 +257,12 @@ For the Superstore data above, the assistant produces a plan like this before it
 +--------------------------------------------------------------------------------+
 ```
 
-## Installation
+</details>
 
-This repository **is** the skill. The folder name matters: clone it as `data-world-3d` into your tool's skills directory.
+<details>
+<summary><b>The spec and the command line</b></summary>
 
-### Claude Code
-
-Personal install, available in every project:
-
-```bash
-git clone https://github.com/techwithprateek/3d-dashboard-skill.git ~/.claude/skills/data-world-3d
-```
-
-Project-only install, run from your project root:
-
-```bash
-git clone https://github.com/techwithprateek/3d-dashboard-skill.git .claude/skills/data-world-3d
-```
-
-Start a new Claude Code session afterwards. To update later:
-
-```bash
-git -C ~/.claude/skills/data-world-3d pull
-```
-
-### Claude Desktop and claude.ai
-
-1. Clone the repo, then zip **only the skill files**, not the whole checkout:
-   ```bash
-   git clone https://github.com/techwithprateek/3d-dashboard-skill.git data-world-3d
-   cd data-world-3d
-   zip -r ../data-world-3d.zip SKILL.md assets scripts references examples
-   ```
-2. Open **Settings → Capabilities → Skills** and upload `data-world-3d.zip`. Menu names change from time to time, so look for the Skills section.
-3. Turn on code execution and file creation. The skill runs Python to aggregate your data.
-4. Attach your data file and ask: "Turn this into a 3D world with the data-world-3d skill." Download the HTML file Claude creates and open it in your browser.
-
-### Other AI assistants
-
-The skill is plain Markdown plus scripts in the standard `SKILL.md` layout. If your tool supports skills, clone the repo into its skills directory as `data-world-3d`:
-
-| Tool | Skills directory |
-| --- | --- |
-| Cursor | `.cursor/skills/` or `~/.cursor/skills/` |
-| Windsurf | `.windsurf/skills/` |
-| Codex CLI, Antigravity and other agents using the shared standard | `.agents/skills/` or `~/.agents/skills/` |
-| Continue | `.continue/skills/` |
-| Droid (Factory) | `.factory/skills/` |
-
-For example:
-
-```bash
-git clone https://github.com/techwithprateek/3d-dashboard-skill.git ~/.agents/skills/data-world-3d
-```
-
-These paths follow the conventions other skill packs use. If your tool differs, check its documentation. If it has no skill support at all, clone the repo into your project and tell the assistant: "Read `data-world-3d/SKILL.md` and follow it for `my-data.csv`."
-
-### Without an assistant
-
-The scripts run on their own. See [Command line](#command-line).
-
-## Prerequisites
-
-- **Python 3.9+** with `pandas`. Add `openpyxl` for Excel files.
-- **Node 18+** is optional. It is only used by the browserless smoke test.
-- **A WebGL browser and an internet connection** when you open the page, because it loads three.js and fonts from a CDN.
-
-```bash
-python3 --version
-pip install pandas openpyxl
-```
-
-These steps are for you. The assistant should ask before installing anything on your machine.
-
-## Usage
-
-### Skill mode
-
-The skill activates when you ask for a 3D view of your data. Just describe what you want:
-
-```
-Use data-world-3d on sales.csv
-```
-
-In Claude Code you can also invoke it directly:
-
-```
-/data-world-3d sales.csv
-```
-
-### Example prompts
-
-```
-Turn orders.csv into a 3D world. Color it by profit margin.
-
-Make a 3D hospital from patients.xlsx. Lower readmission rate is better.
-
-Make a 3D world from this Kaggle dataset: olistbr/brazilian-ecommerce
-
-Same data, but show it as a city instead of a store.
-
-Replace my PowerBI dashboard with something people want to click.
-```
-
-### What to expect
-
-1. The assistant profiles the file and tells you which kit it picked and why.
-2. It states the health metric and which column feeds shelves, vehicles, desks and people.
-3. It builds the page and checks that it runs.
-4. It tells you what each object stands for, the finding on the sign, and anything it left out.
-
-### Command line
-
-```bash
-# 1. See what is in the file
-python3 scripts/profile_data.py my-data.csv
-
-# 2. Build the world from a spec
-python3 scripts/build_world.py \
-  --data my-data.csv --spec spec.json --out my-world.html
-
-# 3. Try the same data in another kit
-python3 scripts/build_world.py \
-  --data my-data.csv --spec spec.json --out my-world-city.html --domain city
-
-# 4. Check that the page runs (no browser needed)
-node scripts/smoke_test.mjs my-world.html
-```
-
-## The spec
+&nbsp;
 
 One small JSON file drives everything. A shortened version of the Superstore spec:
 
@@ -311,7 +294,28 @@ One small JSON file drives everything. A shortened version of the Superstore spe
 
 The full format is in [`references/spec-schema.md`](references/spec-schema.md). A complete example sits in [`examples/`](examples/).
 
-## Design principles
+Run the scripts yourself:
+
+```bash
+# 1. See what is in the file
+python3 scripts/profile_data.py my-data.csv
+
+# 2. Build the world from a spec
+python3 scripts/build_world.py --data my-data.csv --spec spec.json --out my-world.html
+
+# 3. Try the same data in another kit
+python3 scripts/build_world.py --data my-data.csv --spec spec.json --out my-world-city.html --domain city
+
+# 4. Check that the page runs (no browser needed, needs Node 18+)
+node scripts/smoke_test.mjs my-world.html
+```
+
+</details>
+
+<details>
+<summary><b>Design principles</b></summary>
+
+&nbsp;
 
 - **The data decides.** Cards, labels and sizes are computed from your file. The assistant adds a finding only when the numbers support it.
 - **Color is never the only signal.** Labels carry an arrow and the value, and cards carry a text status.
@@ -319,7 +323,12 @@ The full format is in [`references/spec-schema.md`](references/spec-schema.md). 
 - **People are proportional.** The number of figures follows each group's share. It is not an exact count.
 - **Your rows stay local.** The page embeds only the aggregated numbers per group, never the raw rows.
 
-## Project structure
+</details>
+
+<details>
+<summary><b>Project structure</b></summary>
+
+&nbsp;
 
 ```
 3d-dashboard-skill/               # clone this as data-world-3d
@@ -343,11 +352,16 @@ The full format is in [`references/spec-schema.md`](references/spec-schema.md). 
 └── LICENSE
 ```
 
+</details>
+
 ## Contributing
 
 Pull requests are welcome. The most useful contribution is a new domain kit.
 
-### Add a domain kit
+<details>
+<summary><b>Add a domain kit and test it</b></summary>
+
+&nbsp;
 
 Open `assets/kits.js` and add an entry next to the others. Copy the closest existing kit and change the props. A kit provides:
 
@@ -363,7 +377,7 @@ Open `assets/kits.js` and add an entry next to the others. Copy the closest exis
 
 Builders receive an item with `size01` (0 to 1), `color` (the health color) and `metrics`. The engine ships helpers for houses, warehouses, silos, cranes, masts, pylons, fields and more.
 
-### Test your change
+Test your change with the Superstore data from Kaggle:
 
 ```bash
 for d in retail datacenter healthcare factory city hospitality education energy; do
@@ -374,35 +388,37 @@ done
 
 Every line should print `OK`. Then open the page and look at it, because the smoke test cannot see overlaps or odd colors. Please include a screenshot in your pull request.
 
+</details>
+
 ## Troubleshooting
 
-### The page is blank or stuck on "Building the world..."
+<details>
+<summary><b>Common problems and fixes</b></summary>
 
-The page loads three.js and fonts from a CDN. Check your internet connection and that WebGL is enabled in your browser. Opening the file from a restricted corporate network can also block the CDN.
+&nbsp;
 
-### `ModuleNotFoundError: No module named 'pandas'`
+**The page is blank or stuck on "Building the world..."**
+The page loads three.js and fonts from a CDN. Check your internet connection and that WebGL is enabled in your browser. A restricted corporate network can also block the CDN.
 
+**`ModuleNotFoundError: No module named 'pandas'`**
 Install it yourself: `pip install pandas`. For `.xlsx` files also run `pip install openpyxl`.
 
-### `Metric 'x': column 'y' not found`
-
+**`Metric 'x': column 'y' not found`**
 The error lists the real column names. Fix the `col` in your spec so it matches exactly, including capitals and spaces.
 
-### The smoke test downloads something
-
+**The smoke test downloads something**
 The first run installs `three@0.160.0` into a temporary folder so it can run the scene code. It needs `npm` and a network connection once.
 
-### Labels overlap in the first view
-
+**Labels overlap in the first view**
 The default view shows the whole chain, so labels are small. Click an object or scroll to zoom in, and the labels scale up.
 
-### Claude says the zip contains too many files
-
+**Claude says the zip contains too many files**
 You zipped the whole checkout, including `.git` and the README images. Zip only `SKILL.md assets scripts references examples`, about a dozen files.
 
-### The world shows my top 8 only
-
+**The world shows my top 8 only**
 That is by design. Each slot shows the top groups, and the rest are left out. Raise `top` in the spec for vehicles or desks, or use `rank_by` to choose what counts as top.
+
+</details>
 
 ## Credits
 
