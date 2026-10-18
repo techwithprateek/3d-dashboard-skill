@@ -27,7 +27,7 @@ retail: {
   source(){ warehouse(-42,{doors:[-48.75,-44.25,-39.75,-35.25]}); siteLabel('WAREHOUSE',-42,0,11);
     for (let i=0;i<4;i++) container(-52+i*0.0, 0.75+(i%2)*1.5, -13+(i>1?3.4:0), [0xd03b3b,0x2a78d6,0xeda100,0x1baf7a][i]); },
   dest(){ neighborhood(42,'CUSTOMERS'); },
-  terminalAt:{x:-48.75, z:9.9, dx:4.5, y:0.06},
+  terminalAt:{x:-41.75, z:9.9, dx:4.5, y:0.06},
   fixture(it){ const g = new THREE.Group(), n = Math.round(6 + 18*it.size01);
     for (const sx of [-2.05,2.05]) for (const sz of [-0.6,0.6]) g.add(box(0.12,4.1,0.12,0x8693a8,sx,2.0,sz));
     [0.2,1.45,2.7,3.95].forEach(y=>g.add(box(4.3,0.1,1.4,0xaab5c6,0,y,0)));
@@ -151,7 +151,7 @@ city: {
 
 // ---- hospitality: restaurants, cafes, hotels, food delivery ----
 hospitality: {
-  sky:['#6fb1e6','#bcdcf2','#e8f3fa'], ground:0x90bd6e, road:{color:0x585c66, dash:0xf2f2ee}, route:{x0:-6, x1:42}, from:'the restaurant', to:'customers',
+  sky:['#6fb1e6','#bcdcf2','#e8f3fa'], ground:0x90bd6e, road:{color:0x585c66, dash:0xf2f2ee}, route:{x0:-6, x1:35}, from:'the restaurant', to:'customers',
   terminalAt:{x:5.2, z:5.3, dx:1.8, y:1.5},
   words:{fixture:'Table', mover:'Scooter', terminal:'Station', actor:'Guests', landmark:'Whole restaurant', fixtureHint:'More plates', moverHint:'Bigger scooter'},
   hero(){ hall({floor:[0xcda67a,0xc29a6c], wall:0xf6ecde, band:0xe5873a, pave:0xe4d9c4}); trees(); },
@@ -173,7 +173,7 @@ hospitality: {
 
 // ---- education: schools, universities, edtech, training ----
 education: {
-  sky:['#6bb1ea','#b9dcf4','#e6f3fb'], ground:0x8dc06d, road:{color:0x555a63, dash:0xf2f2ee}, route:{x0:-42, x1:-8}, from:'homes', to:'school',
+  sky:['#6bb1ea','#b9dcf4','#e6f3fb'], ground:0x8dc06d, road:{color:0x555a63, dash:0xf2f2ee}, route:{x0:-35, x1:-8}, from:'homes', to:'school',
   terminalAt:{x:5.2, z:5.3, dx:1.8, y:0.3},
   words:{fixture:'Classroom', mover:'Bus', terminal:'Desk', actor:'Students', landmark:'Whole campus', fixtureHint:'More desks', moverHint:'Bigger bus'},
   hero(){ hall({floor:[0xe8dfc8,0xddd2b8], wall:0xe7c38a, band:0x3a6ea5, pave:0xe0d8c4}); trees(); },
@@ -202,7 +202,7 @@ energy: {
   words:{fixture:'Turbine', mover:'Truck', terminal:'Transformer', actor:'Technicians', landmark:'Whole site', fixtureHint:'Taller turbine', moverHint:'Bigger truck'},
   hero(){ hall({floor:[0xc9c4b8,0xbdb8ac], walls:false, pave:0xcfc9bb});
     for (const x of [-110,-60,70,120]) { const m = new THREE.Mesh(new THREE.ConeGeometry(34,16,12), mat(0x7fa86a,{roughness:1})); m.position.set(x,6,-90); scene.add(m); }
-    for (let x=-54;x<=54;x+=18) pylon(x,-16); wires(-54,54,-16); trees(14); },
+    for (let x=-45;x<=45;x+=15) pylon(x,-16); wires(-45,45,-16); trees(14); },
   source(){ slab(-42,0,30,20,0xb9c79a); for (let r=0;r<4;r++) solarRow(-52,-7+r*4.6,7); siteLabel('SOLAR FIELD',-42,0,8); },
   dest(){ neighborhood(42,'TOWN'); },
   fixture(it){ const g = new THREE.Group(), h = 4+it.size01*4;

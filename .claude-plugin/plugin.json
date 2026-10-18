@@ -1,0 +1,10 @@
+{
+  "name": "data-world-3d",
+  "description": "Turn any dataset into an interactive 3D world dressed for its domain: a store, hospital, data center, factory, city, restaurant, campus or wind farm. Every object is a clickable data point.",
+  "version": "1.0.0",
+  "author": { "name": "techwithprateek", "url": "https://github.com/techwithprateek" },
+  "homepage": "https://github.com/techwithprateek/3d-dashboard-skill",
+  "repository": "https://github.com/techwithprateek/3d-dashboard-skill",
+  "license": "MIT",
+  "keywords": ["3d", "dashboard", "data-visualization", "three.js", "skill"]
+}

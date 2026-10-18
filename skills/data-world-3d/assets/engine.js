@@ -61,7 +61,9 @@ const scene = new THREE.Scene();
 scene.background = skyTex;
 scene.fog = new THREE.Fog(new THREE.Color(KIT.sky[2]), 140, 320);
 const camera = new THREE.PerspectiveCamera(45, innerWidth/innerHeight, 0.1, 700);
-const HOME = {pos:new THREE.Vector3(0,50,82), tar:new THREE.Vector3(0,0,6)};
+const HOME = {pos:new THREE.Vector3(0,44,72), tar:new THREE.Vector3(0,0,6)};
+const fitHome = () => { const k = Math.min(2.4, Math.max(1, 1.67/camera.aspect)); HOME.pos.set(0, 44*k, 6+66*k); };   // pull back on narrow screens
+fitHome();
 camera.position.copy(HOME.pos);
 const renderer = new THREE.WebGLRenderer({antialias:true});
 renderer.setPixelRatio(Math.min(devicePixelRatio,2));
@@ -149,7 +151,8 @@ function trees(n=34, hue=0.33){
 }
 
 // ---------- site builders: the places a vehicle travels between ----------
-const SX = -42, DX = 42;                       // source and destination centres along the road
+const SX = -35, DX = 35;                       // where vehicles turn around; kits draw sites at +-42 and the engine pulls them in by 7
+function placeSite(build, dx){ const n = scene.children.length; build(); const g = new THREE.Group(); scene.children.slice(n).forEach(o=>g.add(o)); g.position.x = dx; scene.add(g); }
 const slab = (cx,cz,w,d,color,y=0.03) => { const m = box(w,0.06,d,color,cx,y,cz,{noShadow:true}); m.receiveShadow = true; scene.add(m); return m; };
 function siteLabel(text, x, z, y=10){ const s = label(text,{size:2.2,bg:'rgba(20,32,46,.86)',color:'#ffffff',edge:'rgba(0,0,0,0)'}); s.position.set(x,y,z); scene.add(s); }
 function house(x,z,wall=0xf4efe6,roof=0xb5543c){
@@ -202,7 +205,7 @@ const LANE0 = 12.3, LANE_GAP = 1.6, ROUTE = KIT.route || {x0:SX, x1:DX};
   slab(0,9.9,140,2.4,0xd9d6cd,0.04); slab(0,24.8,140,2,0xd9d6cd,0.04);
   const dg = new THREE.BoxGeometry(0.9,0.02,0.09), dm = mat(R.dash,{roughness:1});
   for (let k=0;k<5;k++) for (let x=-68;x<68;x+=2.2){ const d = new THREE.Mesh(dg,dm); d.position.set(x,0.07,LANE0+LANE_GAP*(k+0.5)); scene.add(d); }
-  KIT.hero(); KIT.source(); KIT.dest(); }
+  KIT.hero(); placeSite(()=>KIT.source(), 7); placeSite(()=>KIT.dest(), -7); }
 const clouds = [];
 for (let i=0;i<6;i++){ const g = new THREE.Group();
   for (let j=0;j<4;j++){ const s = new THREE.Mesh(new THREE.SphereGeometry(2.4+rnd()*1.8,12,10), new THREE.MeshStandardMaterial({color:0xffffff,roughness:1,emissive:0xffffff,emissiveIntensity:0.35}));
@@ -352,7 +355,7 @@ function deselect(){
   selected = null; panel.classList.remove('open'); document.body.classList.remove('card');
   fly = {t:0, fromPos:camera.position.clone(), fromTar:controls.target.clone(), home:true};
 }
-addEventListener('resize', ()=>{ camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+addEventListener('resize', ()=>{ camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); if (!selected && !fly) { fitHome(); camera.position.copy(HOME.pos); } else fitHome(); });
 globalThis.__dw3d = {interactive, select, deselect, counts:{fixtures:fixtures.length, terminals:terminals.length, movers:movers.length, people:walkers.length}};
 
 // ---------- loop ----------

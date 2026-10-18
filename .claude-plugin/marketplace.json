@@ -1,0 +1,15 @@
+{
+  "name": "3d-dashboard-skill",
+  "owner": { "name": "techwithprateek", "url": "https://github.com/techwithprateek" },
+  "metadata": { "description": "Skills that turn data into interactive 3D worlds." },
+  "plugins": [
+    {
+      "name": "data-world-3d",
+      "source": "./",
+      "description": "Turn any dataset into an interactive 3D world dressed for its domain. Every shelf, vehicle, person and desk is a clickable data point.",
+      "version": "1.0.0",
+      "category": "data-visualization",
+      "keywords": ["3d", "dashboard", "three.js"]
+    }
+  ]
+}
