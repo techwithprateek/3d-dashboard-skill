@@ -7,7 +7,6 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/version-1.0.0-blue?style=for-the-badge" alt="Version 1.0.0">
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/techwithprateek/3d-dashboard-skill?style=for-the-badge&color=green" alt="MIT License"></a>
   <img src="https://img.shields.io/badge/domain_kits-8-purple?style=for-the-badge" alt="8 domain kits">
   <img src="https://img.shields.io/badge/three.js-0.160-black?style=for-the-badge&logo=threedotjs&logoColor=white" alt="three.js 0.160">
   <img src="https://img.shields.io/badge/python-3.9+-yellow?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.9+">
