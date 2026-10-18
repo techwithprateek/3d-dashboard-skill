@@ -1,0 +1,28 @@
+{
+  "title": "Superstore 3D",
+  "subtitle": "Kaggle Sample Superstore, US, 2014 to 2017",
+  "domain": "retail",
+  "currency": "$",
+  "metrics": [
+    {"key": "sales", "label": "Sales", "agg": "sum", "col": "Sales", "fmt": "money"},
+    {"key": "profit", "label": "Profit", "agg": "sum", "col": "Profit", "fmt": "money"},
+    {"key": "margin", "label": "Margin", "expr": "profit/sales*100", "fmt": "pct"},
+    {"key": "orders", "label": "Orders", "agg": "nunique", "col": "Order ID", "fmt": "int"},
+    {"key": "qty", "label": "Units", "agg": "sum", "col": "Quantity", "fmt": "int"},
+    {"key": "discount", "label": "Avg discount", "agg": "mean", "col": "Discount", "mult": 100, "fmt": "pct"},
+    {"key": "customers", "label": "Customers", "agg": "nunique", "col": "Customer ID", "fmt": "int"},
+    {"key": "aov", "label": "Avg order", "expr": "sales/orders", "fmt": "money"}
+  ],
+  "kpis": ["sales", "profit", "orders", "margin"],
+  "health": {"metric": "margin", "good": "high", "range": [-15, 0, 25], "goodText": "Profitable", "badText": "Losing money"},
+  "watch": "discount",
+  "card": ["sales", "profit", "margin", "discount"],
+  "story": {"kind": "bad", "title": "Discount problem", "text": "Orders with a discount over 20% are 14% of all lines and lost $135K in total. Below 20%, the margin is 21.8%."},
+  "slots": {
+    "fixtures": {"dimension": "Sub-Category", "label": "Sub-category", "top": 8, "size": "qty", "rank_by": "sales", "sizeLabel": "units sold"},
+    "movers": {"dimension": "State", "label": "State", "top": 6, "size": "sales", "sizeLabel": "sales", "speed": "orders",
+               "alias": {"California": "CA", "New York": "NY", "Texas": "TX", "Washington": "WA", "Pennsylvania": "PA", "Florida": "FL", "Illinois": "IL", "Ohio": "OH"}},
+    "terminals": {"dimension": "Ship Mode", "label": "Ship mode", "size": "sales", "sizeLabel": "sales", "order": ["Standard Class", "Second Class", "First Class", "Same Day"], "card": ["sales", "orders", "margin", "discount"]},
+    "actors": {"dimension": "Segment", "label": "Segment", "size": "sales", "sizeLabel": "sales", "people": 17, "card": ["sales", "profit", "aov", "margin"]}
+  }
+}

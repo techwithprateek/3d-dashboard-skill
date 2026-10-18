@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>__TITLE__</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* Layout: full-bleed 3D world, floating glass cards. One side card, one legend, one KPI strip. */
+  :root{
+    --ink:#14202e; --mute:#5a6779; --line:#d3dae4; --glass:rgba(255,255,255,.88);
+    --gain:#2a78d6; --loss:#d03b3b; --mid:#bdbcb6;
+    --display:"Bricolage Grotesque","Avenir Next","Segoe UI",system-ui,sans-serif;
+    --body:"Instrument Sans","Avenir Next","Segoe UI",system-ui,sans-serif;
+    color-scheme:light;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:#cfe6f5;color:var(--ink);font:14px/1.45 var(--body);overflow:hidden}
+  canvas{display:block;touch-action:none}
+  .glass{background:var(--glass);border:1px solid var(--line);border-radius:14px;backdrop-filter:blur(10px);box-shadow:0 6px 24px rgba(30,60,100,.12)}
+  #title{position:fixed;top:16px;left:16px;pointer-events:none;max-width:46vw}
+  #title h1{margin:0;font:700 22px/1.1 var(--display);letter-spacing:-.01em}
+  #title p{margin:3px 0 0;color:var(--mute);font-size:12px}
+  #kpis{position:fixed;top:16px;right:16px;display:flex;gap:8px;pointer-events:none;transition:right .35s}
+  body.card #kpis{right:368px}
+  .kpi{padding:8px 14px;min-width:84px}
+  .kpi b{display:block;font:700 18px/1.15 var(--display);font-variant-numeric:tabular-nums}
+  .kpi span{color:var(--mute);font-size:11px;text-transform:uppercase;letter-spacing:.07em}
+  #legend{position:fixed;left:16px;bottom:16px;padding:12px 14px;width:268px;font-size:12px}
+  #legend h3{margin:0 0 6px;font:600 11px var(--body);text-transform:uppercase;letter-spacing:.08em;color:var(--mute)}
+  #legend .bar{height:10px;border-radius:5px}
+  #legend .scale{display:flex;justify-content:space-between;gap:6px;margin:3px 0 10px;color:var(--mute);font-variant-numeric:tabular-nums}
+  #legend .row{display:flex;flex-wrap:wrap;gap:4px 12px;margin-bottom:10px}
+  #legend .row span{display:inline-flex;align-items:center;gap:5px}
+  #legend i{width:10px;height:10px;border-radius:50%;display:inline-block}
+  #legend p{margin:0;color:var(--mute)}
+  #reset{position:fixed;left:16px;top:70px;font:500 12px var(--body);color:var(--ink);padding:6px 12px;cursor:pointer;border-radius:999px}
+  #reset:hover{background:#fff}
+  button:focus-visible{outline:2px solid var(--gain);outline-offset:2px}
+  #tip{position:fixed;pointer-events:none;padding:5px 10px;font-size:12px;font-weight:500;display:none;white-space:nowrap;border-radius:8px}
+  #panel{position:fixed;top:12px;right:12px;bottom:12px;width:336px;padding:22px 20px;transform:translateX(calc(100% + 24px));transition:transform .35s ease;overflow:auto}
+  #panel.open{transform:none}
+  #pTag{font:600 11px var(--body);text-transform:uppercase;letter-spacing:.09em;color:var(--mute)}
+  #pName{margin:4px 0 2px;font:700 26px/1.1 var(--display);letter-spacing:-.01em}
+  #pSub{color:var(--mute);font-size:13px;margin-bottom:14px}
+  #pPill{display:none;align-items:center;gap:6px;font:600 12px var(--body);padding:4px 10px;border-radius:999px;margin-bottom:12px}
+  #pPill.good{display:inline-flex;background:#e3eefb;color:#184f95}
+  #pPill.bad{display:inline-flex;background:#fbe5e5;color:#9c2323}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin-bottom:14px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .grid div{background:#fff;padding:10px 12px;min-width:0}
+  .grid b{display:block;font:700 19px/1.2 var(--display);font-variant-numeric:tabular-nums}
+  .grid span{color:var(--mute);font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+  #pIns{margin:0;font-size:14px;line-height:1.5}
+  #close{position:absolute;top:10px;right:12px;background:none;border:0;color:var(--mute);font-size:26px;line-height:1;cursor:pointer;border-radius:8px;padding:2px 8px}
+  #close:hover{background:#eef2f7;color:var(--ink)}
+  #hint{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);color:var(--ink);background:var(--glass);border-radius:999px;padding:6px 14px;font-size:12px;pointer-events:none;text-align:center}
+  #load{position:fixed;inset:0;display:grid;place-items:center;background:#cfe6f5;color:var(--mute);transition:opacity .6s}
+  @media(max-width:760px){
+    body.card #kpis{right:16px}
+    #kpis{top:auto;bottom:16px;right:16px}.kpi:nth-child(n+3){display:none}
+    #legend{display:none}#hint{display:none}
+    #panel{top:auto;left:8px;right:8px;bottom:8px;width:auto;height:50%;transform:translateY(calc(100% + 16px))}
+    #panel.open{transform:none}#title h1{font-size:18px}
+  }
+</style>
+</head>
+<body>
+<div id="title"><h1 id="hTitle"></h1><p id="hSub"></p></div>
+<div id="kpis"></div>
+<div id="tip" class="glass"></div>
+<aside id="panel" class="glass" aria-live="polite"><button id="close" aria-label="Close card">×</button>
+  <div id="pTag"></div><h2 id="pName"></h2><div id="pSub"></div><div id="pPill"></div><div class="grid" id="pGrid"></div><p id="pIns"></p></aside>
+<button id="reset" class="glass">Reset view</button>
+<section id="legend" class="glass"></section>
+<div id="hint">Click anything in the world to open its card. Drag to orbit, scroll to zoom</div>
+<div id="load">Building the world...</div>
+
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+__ENGINE__
+</script>
+</body>
+</html>

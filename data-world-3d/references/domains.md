@@ -1,0 +1,35 @@
+# Choosing a domain kit
+
+Pick by what the data is about. The same spec works in every kit, so switching is cheap (`--domain`).
+
+| domain | use for | fixtures | movers | terminals | people |
+| --- | --- | --- | --- | --- | --- |
+| `retail` | stores, ecommerce, FMCG, marketplaces | shelves (fuller = more units) | vans | checkout desks | shoppers |
+| `datacenter` | SaaS, product analytics, IT ops, API metrics | server racks (taller = bigger) | cargo drones | consoles | engineers |
+| `healthcare` | hospitals, clinics, pharma, public health | ward bays (more beds = bigger) | ambulances | triage desks | patients |
+| `factory` | manufacturing, supply chain, logistics, operations | machines with moving arms | trucks | conveyor lines | workers in hard hats |
+| `city` | finance, real estate, telecom, anything unclear | office towers (taller = bigger) | cars | kiosks | clients |
+| `hospitality` | restaurants, cafes, hotels, food delivery | dining tables (more plates) | delivery scooters | service stations | guests |
+| `education` | schools, universities, edtech, training | classrooms (more desks) | school buses | admin desks | students |
+| `energy` | utilities, climate, agriculture, outdoor sites | wind turbines (taller, faster) | service trucks | transformers | technicians |
+
+## Mapping examples
+
+| data | domain | fixtures | movers | terminals | actors | health |
+| --- | --- | --- | --- | --- | --- | --- |
+| Superstore orders | retail | Sub-Category | State | Ship Mode | Segment | margin |
+| Hospital admissions | healthcare | Department | Admission source | Triage level | Insurance type | readmission rate (low is good) |
+| SaaS subscriptions | datacenter | Feature or plan | Acquisition channel | Support tier | Company size | net revenue retention |
+| Production log | factory | Machine or line | Destination | Shift | Supplier | defect rate (low is good) |
+| Fund holdings | city | Sector | Region | Asset class | Client type | return |
+| Restaurant orders | hospitality | Menu category | Delivery zone | Order channel | Customer type | tip or margin |
+| Course results | education | Course | Campus | Exam type | Cohort | pass rate |
+| Wind and solar output | energy | Site | Region | Equipment type | Crew | capacity factor |
+
+## Picking slot columns
+
+- The best `fixtures` column has 5 to 8 meaningful values and a clear size metric.
+- `movers` fit places, channels or routes. They drive around, so a count of orders makes a good `speed`.
+- `terminals` fit process steps or methods with 2 to 4 values.
+- `actors` fit people categories with 2 to 4 values.
+- Skip a slot if no column fits. The world simply leaves that part out.
