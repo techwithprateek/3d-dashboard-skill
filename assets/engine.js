@@ -167,7 +167,8 @@ function neighborhood(cx, text){
   siteLabel(text, cx, 0, 8);
 }
 function warehouse(cx, {w=24,d=16,h=7,wall=0xdfe3e8,roof=0x8693a8,band=0x2a78d6,doors=[]}={}){
-  slab(cx,1,w+6,d+8,0xc9ccce);
+  { const back = -d/2-3.5, front = 10.9;                 // pad stops at the sidewalk, never reaches the road (z=11)
+    slab(cx,(back+front)/2,w+6,front-back,0xc9ccce); }
   scene.add(box(w,h,d,wall,cx,h/2,0), box(w+0.6,0.4,d+0.6,roof,cx,h+0.2,0), box(w+0.1,0.9,d+0.1,band,cx,h-1.3,0));
   doors.forEach(x=>{ scene.add(box(3.4,3.8,0.2,0x8693a8,x,1.9,d/2+0.05)); for (let k=0;k<5;k++) scene.add(box(3.4,0.06,0.22,0x6b7688,x,0.6+k*0.7,d/2+0.06,{noShadow:true})); });
 }

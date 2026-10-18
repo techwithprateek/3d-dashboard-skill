@@ -27,7 +27,7 @@ retail: {
   source(){ warehouse(-42,{doors:[-48.75,-44.25,-39.75,-35.25]}); siteLabel('WAREHOUSE',-42,0,11);
     for (let i=0;i<4;i++) container(-52+i*0.0, 0.75+(i%2)*1.5, -13+(i>1?3.4:0), [0xd03b3b,0x2a78d6,0xeda100,0x1baf7a][i]); },
   dest(){ neighborhood(42,'CUSTOMERS'); },
-  terminalAt:{x:-41.75, z:9.9, dx:4.5, y:0.06},
+  terminalAt:{x:-41.75, z:9.5, dx:4.5, y:0.06},
   fixture(it){ const g = new THREE.Group(), n = Math.round(6 + 18*it.size01);
     for (const sx of [-2.05,2.05]) for (const sz of [-0.6,0.6]) g.add(box(0.12,4.1,0.12,0x8693a8,sx,2.0,sz));
     [0.2,1.45,2.7,3.95].forEach(y=>g.add(box(4.3,0.1,1.4,0xaab5c6,0,y,0)));

@@ -35,7 +35,7 @@
 </p>
 
 <p align="center">
-  <sub>Built from the public <a href="https://www.kaggle.com/datasets/vivek468/superstore-dataset-final">Sample Superstore dataset on Kaggle</a> (5,009 orders). Recorded in headless Chromium from the file in <a href="skills/data-world-3d/examples/superstore-3d.html"><code>examples/</code></a>.</sub>
+  <sub>Built from the public <a href="https://www.kaggle.com/datasets/vivek468/superstore-dataset-final">Sample Superstore dataset on Kaggle</a> (5,009 orders). Recorded in headless Chromium from the file in <a href="examples/superstore-3d.html"><code>examples/</code></a>.</sub>
 </p>
 
 ---
@@ -155,46 +155,35 @@ For the Superstore data above, the assistant produces a plan like this before it
 
 ## Installation
 
-The skill lives in [`skills/data-world-3d`](skills/data-world-3d). Pick the option that matches your tool.
+This repository **is** the skill. The folder name matters: clone it as `data-world-3d` into your tool's skills directory.
 
-### Claude Code (plugin marketplace, recommended)
-
-```
-/plugin install data-world-3d --marketplace techwithprateek/3d-dashboard-skill
-```
-
-This needs Claude Code 2.1.275 or later. On older versions, use the two-step form:
-
-```
-/plugin marketplace add techwithprateek/3d-dashboard-skill
-/plugin install data-world-3d@3d-dashboard-skill
-```
-
-### Claude Code (manual copy)
+### Claude Code
 
 Personal install, available in every project:
 
 ```bash
-git clone https://github.com/techwithprateek/3d-dashboard-skill.git
-mkdir -p ~/.claude/skills
-cp -R 3d-dashboard-skill/skills/data-world-3d ~/.claude/skills/
+git clone https://github.com/techwithprateek/3d-dashboard-skill.git ~/.claude/skills/data-world-3d
 ```
 
-Project-only install:
+Project-only install, run from your project root:
 
 ```bash
-mkdir -p .claude/skills
-cp -R 3d-dashboard-skill/skills/data-world-3d .claude/skills/
+git clone https://github.com/techwithprateek/3d-dashboard-skill.git .claude/skills/data-world-3d
 ```
 
-Start a new Claude Code session afterwards.
+Start a new Claude Code session afterwards. To update later:
+
+```bash
+git -C ~/.claude/skills/data-world-3d pull
+```
 
 ### Claude Desktop and claude.ai
 
-1. Zip **only the skill folder**, not the whole repository:
+1. Clone the repo, then zip **only the skill files**, not the whole checkout:
    ```bash
-   cd 3d-dashboard-skill/skills
-   zip -r data-world-3d.zip data-world-3d
+   git clone https://github.com/techwithprateek/3d-dashboard-skill.git data-world-3d
+   cd data-world-3d
+   zip -r ../data-world-3d.zip SKILL.md assets scripts references examples
    ```
 2. Open **Settings → Capabilities → Skills** and upload `data-world-3d.zip`. Menu names change from time to time, so look for the Skills section.
 3. Turn on code execution and file creation. The skill runs Python to aggregate your data.
@@ -202,7 +191,7 @@ Start a new Claude Code session afterwards.
 
 ### Other AI assistants
 
-The skill is plain Markdown plus scripts in the standard `SKILL.md` layout. If your tool supports skills, copy the `data-world-3d` folder into its skills directory:
+The skill is plain Markdown plus scripts in the standard `SKILL.md` layout. If your tool supports skills, clone the repo into its skills directory as `data-world-3d`:
 
 | Tool | Skills directory |
 | --- | --- |
@@ -212,7 +201,13 @@ The skill is plain Markdown plus scripts in the standard `SKILL.md` layout. If y
 | Continue | `.continue/skills/` |
 | Droid (Factory) | `.factory/skills/` |
 
-These paths follow the conventions other skill packs use. If your tool differs, check its documentation. If it has no skill support at all, put the folder in your project and tell the assistant: "Read `data-world-3d/SKILL.md` and follow it for `my-data.csv`."
+For example:
+
+```bash
+git clone https://github.com/techwithprateek/3d-dashboard-skill.git ~/.agents/skills/data-world-3d
+```
+
+These paths follow the conventions other skill packs use. If your tool differs, check its documentation. If it has no skill support at all, clone the repo into your project and tell the assistant: "Read `data-world-3d/SKILL.md` and follow it for `my-data.csv`."
 
 ### Without an assistant
 
@@ -272,18 +267,18 @@ Replace my PowerBI dashboard with something people want to click.
 
 ```bash
 # 1. See what is in the file
-python3 skills/data-world-3d/scripts/profile_data.py my-data.csv
+python3 scripts/profile_data.py my-data.csv
 
 # 2. Build the world from a spec
-python3 skills/data-world-3d/scripts/build_world.py \
+python3 scripts/build_world.py \
   --data my-data.csv --spec spec.json --out my-world.html
 
 # 3. Try the same data in another kit
-python3 skills/data-world-3d/scripts/build_world.py \
+python3 scripts/build_world.py \
   --data my-data.csv --spec spec.json --out my-world-city.html --domain city
 
 # 4. Check that the page runs (no browser needed)
-node skills/data-world-3d/scripts/smoke_test.mjs my-world.html
+node scripts/smoke_test.mjs my-world.html
 ```
 
 ## The spec
@@ -316,7 +311,7 @@ One small JSON file drives everything. A shortened version of the Superstore spe
 | `terminals` | dock bays, consoles, desks, kiosks | 4 |
 | `actors` | people, one color per group | 4 groups |
 
-The full format is in [`references/spec-schema.md`](skills/data-world-3d/references/spec-schema.md). A complete example sits in [`examples/`](skills/data-world-3d/examples/).
+The full format is in [`references/spec-schema.md`](references/spec-schema.md). A complete example sits in [`examples/`](examples/).
 
 ## Design principles
 
@@ -329,28 +324,23 @@ The full format is in [`references/spec-schema.md`](skills/data-world-3d/referen
 ## Project structure
 
 ```
-3d-dashboard-skill/
-├── .claude-plugin/
-│   ├── plugin.json              # plugin manifest
-│   └── marketplace.json         # one-line install for Claude Code
-├── skills/
-│   └── data-world-3d/
-│       ├── SKILL.md             # the instructions the assistant follows
-│       ├── assets/
-│       │   ├── engine.js        # camera, cards, legend, picking, motion
-│       │   ├── kits.js          # the 8 domain kits
-│       │   └── template.html    # page shell and styles
-│       ├── scripts/
-│       │   ├── profile_data.py  # profile a data file
-│       │   ├── build_world.py   # aggregate data and write the HTML
-│       │   └── smoke_test.mjs   # run the scene without a browser
-│       ├── references/
-│       │   ├── spec-schema.md   # spec format
-│       │   └── domains.md       # which kit to pick, mapping examples
-│       └── examples/
-│           ├── superstore.spec.json
-│           └── superstore-3d.html
-├── docs/                        # README images
+3d-dashboard-skill/               # clone this as data-world-3d
+├── SKILL.md                      # the instructions the assistant follows
+├── assets/
+│   ├── engine.js                 # camera, cards, legend, picking, motion
+│   ├── kits.js                   # the 8 domain kits
+│   └── template.html             # page shell and styles
+├── scripts/
+│   ├── profile_data.py           # profile a data file
+│   ├── build_world.py            # aggregate data and write the HTML
+│   └── smoke_test.mjs            # run the scene without a browser
+├── references/
+│   ├── spec-schema.md            # spec format
+│   └── domains.md                # which kit to pick, mapping examples
+├── examples/
+│   ├── superstore.spec.json
+│   └── superstore-3d.html
+├── docs/                         # README images
 ├── README.md
 └── LICENSE
 ```
@@ -361,7 +351,7 @@ Pull requests are welcome. The most useful contribution is a new domain kit.
 
 ### Add a domain kit
 
-Open `skills/data-world-3d/assets/kits.js` and add an entry next to the others. Copy the closest existing kit and change the props. A kit provides:
+Open `assets/kits.js` and add an entry next to the others. Copy the closest existing kit and change the props. A kit provides:
 
 | Member | Purpose |
 | --- | --- |
@@ -378,7 +368,6 @@ Builders receive an item with `size01` (0 to 1), `color` (the health color) and 
 ### Test your change
 
 ```bash
-cd skills/data-world-3d
 for d in retail datacenter healthcare factory city hospitality education energy; do
   python3 scripts/build_world.py --data "Sample - Superstore.csv" --spec examples/superstore.spec.json \
     --out /tmp/$d.html --domain $d && node scripts/smoke_test.mjs /tmp/$d.html
@@ -411,7 +400,7 @@ The default view shows the whole chain, so labels are small. Click an object or 
 
 ### Claude says the zip contains too many files
 
-You zipped the whole repository. Zip only the `skills/data-world-3d` folder, which has about a dozen files.
+You zipped the whole checkout, including `.git` and the README images. Zip only `SKILL.md assets scripts references examples`, about a dozen files.
 
 ### The world shows my top 8 only
 
