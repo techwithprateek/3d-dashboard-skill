@@ -13,7 +13,6 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/techwithprateek/3d-dashboard-skill/stargazers"><img src="https://img.shields.io/github/stars/techwithprateek/3d-dashboard-skill?style=flat-square&logo=github" alt="GitHub stars"></a>
   <img src="https://img.shields.io/badge/Claude_Code-skill-D97757?style=flat-square" alt="Claude Code skill">
   <img src="https://img.shields.io/badge/output-single_HTML_file-lightgrey?style=flat-square" alt="Single HTML file output">
   <img src="https://img.shields.io/badge/build_step-none-lightgrey?style=flat-square" alt="No build step">
