@@ -40,29 +40,28 @@
 
 ## Quick start
 
-**1. Install** (Claude Code):
+**Claude Desktop** (no git, no terminal):
+
+1. Download [`data-world-3d.zip`](https://github.com/techwithprateek/3d-dashboard-skill/raw/main/data-world-3d.zip).
+2. In Claude Desktop, open **Settings → Capabilities → Skills** and upload the zip.
+3. Attach your data file and ask: "Turn this into a 3D world with the data-world-3d skill."
+4. Claude builds the page in its own sandbox. Download the HTML file it makes and open it in your browser. Click anything.
+
+Turn on code execution and file creation if asked. Claude runs the Python for you, so you do not need to install anything. Your browser needs an internet connection to load three.js.
+
+**Prefer the terminal?** Use Claude Code with git instead:
 
 ```bash
 git clone https://github.com/techwithprateek/3d-dashboard-skill.git ~/.claude/skills/data-world-3d
 ```
 
-**2. Ask**, in a new Claude Code session:
+Then, in a new Claude Code session:
 
 ```
 Use data-world-3d on my-data.csv
 ```
 
-**3. Open** the `my-data-3d.html` file it creates in any browser. Click anything.
-
-You need Python 3.9+ with pandas (`pip install pandas`, plus `openpyxl` for Excel files) and a browser with an internet connection.
-
-**No git, or only Claude Desktop?** You do not need either:
-
-1. Download [`data-world-3d.zip`](https://github.com/techwithprateek/3d-dashboard-skill/raw/main/data-world-3d.zip).
-2. In Claude Desktop, open **Settings → Capabilities → Skills** and upload the zip.
-3. Attach your data file and ask: "Turn this into a 3D world with the data-world-3d skill."
-
-Claude builds the page in its own sandbox. Download the HTML file it makes and open it in your browser. Details are under [Install options](#install-options).
+Open the `my-data-3d.html` file it creates. This route needs Python 3.9+ with pandas (`pip install pandas`, plus `openpyxl` for Excel files). Other tools and options are under [Install options](#install-options).
 
 ## What it does
 
