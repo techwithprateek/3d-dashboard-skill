@@ -1,16 +1,17 @@
 # 3D Dashboard Skill
 
-Turn any dataset into an interactive 3D world. Give your AI assistant a CSV or Excel file, and it builds a single HTML page where your business is a place: shelves, vans, shoppers, a checkout desk. Every object is a real data point. Click it to fly in and see its numbers.
+Turn any dataset into an interactive 3D world. Give your AI assistant a CSV or Excel file, and it builds a single HTML page where your business is a place: a warehouse, a store, a neighborhood, and vans driving between them. Every object is a real data point. Click it to fly in and see its numbers.
 
 ![A 3D store built from the Kaggle Superstore data](docs/hero.jpg)
 
-The scene above is the Kaggle Sample Superstore dataset (US retail, 2014 to 2017). Shelves are product sub-categories, vans are the top six states, the desk is shipping modes, and the people are customer segments. Blue means profit, red means loss.
+The scene above is the Kaggle Sample Superstore dataset (US retail, 2014 to 2017). Shelves are product sub-categories, vans are the top six states, the dock bays at the warehouse are shipping modes, and the people are customer segments. Blue means profit, red means loss.
 
 ## What it does
 
 - Reads your data (CSV, Excel, JSON, Parquet) and works out what the business is.
 - Picks a **domain kit** so the world looks like your industry: a store, a hospital, a data center, a factory, a city, a restaurant, a campus or a wind farm.
-- Maps your columns to objects: things you hold become shelves, racks or beds, places and channels become vehicles, process steps become desks, customer groups become people.
+- Lays the world out like a real operation: a source site, the main site and a destination along one road, with vehicles driving back and forth between them.
+- Maps your columns to objects: things you hold become shelves, racks or beds, places and channels become vehicles, process steps become dock bays or desks, customer groups become people.
 - Colors everything by one health metric (profit margin, readmission rate, churn, defect rate) on a red to blue scale that works for colorblind viewers. Labels also carry an arrow and the value, so color is never the only signal.
 - Finds a real finding in your data and puts it on the landmark sign.
 - Writes one self-contained `.html` file you can open in any browser. No server, no build step.
@@ -21,20 +22,20 @@ Click any object and the camera flies to it and opens a card:
 
 ## Domain kits
 
-The same spec works in every kit, so you can switch the look with one flag. The images below all use the Superstore data so the kits are easy to compare. With real hospital or factory data the labels would match the domain.
+Every kit is a line of three places along one road. The same spec works in every kit, so you can switch the look with one flag. The images below all use the Superstore data so the kits are easy to compare. With real hospital or factory data the labels would match the domain.
 
 ![The eight domain kits](docs/domains.jpg)
 
-| Kit | Use for | Shelves become | Vehicles | People |
-| --- | --- | --- | --- | --- |
-| `retail` | stores, ecommerce, FMCG | shelves | vans | shoppers |
-| `datacenter` | SaaS, product analytics, IT ops | server racks | drones | engineers |
-| `healthcare` | hospitals, clinics, pharma | ward bays with beds | ambulances | patients |
-| `factory` | manufacturing, supply chain, logistics | machines with moving arms | trucks | workers |
-| `city` | finance, real estate, anything unclear | office towers | cars | clients |
-| `hospitality` | restaurants, hotels, food delivery | dining tables | scooters | guests |
-| `education` | schools, universities, edtech | classrooms | buses | students |
-| `energy` | utilities, climate, agriculture | wind turbines | service trucks | technicians |
+| Kit | Use for | Places along the road | Main site holds | Vehicles | People |
+| --- | --- | --- | --- | --- | --- |
+| `retail` | stores, ecommerce, FMCG | warehouse, store, customers' homes | shelves | vans | shoppers |
+| `datacenter` | SaaS, product analytics, IT ops | offices, data center, edge sites | server racks | drones | engineers |
+| `healthcare` | hospitals, clinics, pharma | homes, hospital, clinics | ward bays with beds | ambulances | patients |
+| `factory` | manufacturing, supply chain, logistics | suppliers, plant, port | machines with moving arms | trucks | workers |
+| `city` | finance, real estate, anything unclear | suburbs, towers, harbor | office towers | cars | clients |
+| `hospitality` | restaurants, hotels, food delivery | farms, restaurant, customers | dining tables | scooters | guests |
+| `education` | schools, universities, edtech | homes, school, sports field | classrooms | buses | students |
+| `energy` | utilities, climate, agriculture | solar field, wind farm, town | wind turbines | service trucks | technicians |
 
 ## Install
 
@@ -151,12 +152,12 @@ The full format is in [`data-world-3d/references/spec-schema.md`](data-world-3d/
 - Each slot shows the top N groups (8 shelves, 6 vehicles, 4 desks, 4 people groups). The rest are left out, and the assistant should tell you how many.
 - The number of people is proportional to each group's share, not exact.
 - Every value on a card comes from your data. Insights are written from the numbers, and the assistant adds a finding only when the data supports it.
-- All kits share one layout: a hall, a ring road, a front desk row and walking people. Kits change the props, not the floor plan.
+- Every kit uses the same linear plan: a source site, the main site and a destination along one road. Kits change the places and props, not the plan, so the main site is always a hall-sized area with up to 8 fixtures.
 - The scene was checked in headless Chromium and with a Node smoke test that opens every card. Phones get a bottom-sheet card. It has not been tested on every device.
 
 ## Add your own domain
 
-Open `data-world-3d/assets/kits.js` and add an entry next to the others. A kit provides `sky`, `ground`, `ring`, `words`, `env()`, `fixture(item)`, `mover(item)`, `terminal(item)` and `landmark(text)`. Builders get an item with `size01` (0 to 1), `color` (the health color) and `metrics`, and return a three.js group. Copy the closest existing kit and change the props.
+Open `data-world-3d/assets/kits.js` and add an entry next to the others. A kit provides `sky`, `ground`, `road`, `from`, `to`, `words`, `hero()`, `source()`, `dest()`, `terminalAt`, `fixture(item)`, `mover(item)`, `terminal(item)` and `landmark(text)`. `source()` and `dest()` build the places at either end of the road, and the engine ships helpers for houses, warehouses, silos, cranes, masts and more. Builders get an item with `size01` (0 to 1), `color` (the health color) and `metrics`, and return a three.js group. Copy the closest existing kit and change the props.
 
 ## Credits
 

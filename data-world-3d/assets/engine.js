@@ -59,9 +59,9 @@ const sky = document.createElement('canvas'); sky.width = 4; sky.height = 256;
 const skyTex = new THREE.CanvasTexture(sky); skyTex.colorSpace = THREE.SRGBColorSpace;
 const scene = new THREE.Scene();
 scene.background = skyTex;
-scene.fog = new THREE.Fog(new THREE.Color(KIT.sky[2]), 80, 170);
-const camera = new THREE.PerspectiveCamera(45, innerWidth/innerHeight, 0.1, 400);
-const HOME = {pos:new THREE.Vector3(0,36,50), tar:new THREE.Vector3(0,0,2)};
+scene.fog = new THREE.Fog(new THREE.Color(KIT.sky[2]), 140, 320);
+const camera = new THREE.PerspectiveCamera(45, innerWidth/innerHeight, 0.1, 700);
+const HOME = {pos:new THREE.Vector3(0,50,82), tar:new THREE.Vector3(0,0,6)};
 camera.position.copy(HOME.pos);
 const renderer = new THREE.WebGLRenderer({antialias:true});
 renderer.setPixelRatio(Math.min(devicePixelRatio,2));
@@ -70,13 +70,13 @@ renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure
 renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 document.body.appendChild(renderer.domElement);
 const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true; controls.maxPolarAngle = Math.PI/2.1; controls.minDistance = 4; controls.maxDistance = 100;
+controls.enableDamping = true; controls.maxPolarAngle = Math.PI/2.1; controls.minDistance = 4; controls.maxDistance = 170;
 controls.target.copy(HOME.tar);
 controls.autoRotate = !reduceMotion; controls.autoRotateSpeed = 0.35;
 scene.add(new THREE.HemisphereLight(0xdcecff, 0x8fae6e, 1.7));
 const sun = new THREE.DirectionalLight(0xfff0d2, 2.7);
-sun.position.set(28,50,24); sun.castShadow = true; sun.shadow.mapSize.set(2048,2048);
-Object.assign(sun.shadow.camera,{left:-48,right:48,top:48,bottom:-48,near:1,far:140});
+sun.position.set(40,75,45); sun.castShadow = true; sun.shadow.mapSize.set(4096,4096);
+Object.assign(sun.shadow.camera,{left:-85,right:85,top:55,bottom:-50,near:1,far:240});
 sun.shadow.bias = -0.0004; sun.shadow.radius = 3; scene.add(sun);
 
 // ---------- helpers (kits use these) ----------
@@ -127,8 +127,7 @@ const tickers = []; const onTick = fn => tickers.push(fn);
 // ---------- shared environment pieces (kits call these) ----------
 function hall({floor=[0xe6e3db,0xdad6cc], wall=0xf3f1ec, band=0x2a78d6, walls=true, pave=0xd9d6cd, pad=false}={}){
   const hex = c => '#' + new THREE.Color(c).getHexString();
-  const plaza = new THREE.Mesh(new THREE.ShapeGeometry(new THREE.Shape(ell(20,14))), mat(pave,{roughness:1}));
-  plaza.rotation.x = -Math.PI/2; plaza.position.y = 0.02; plaza.receiveShadow = true; scene.add(plaza);
+  slab(0,0,36,22,pave);
   const tile = document.createElement('canvas'); tile.width = tile.height = 128; const g = tile.getContext('2d');
   g.fillStyle = hex(floor[0]); g.fillRect(0,0,128,128); g.fillStyle = hex(floor[1]); g.fillRect(0,0,64,64); g.fillRect(64,64,64,64);
   const tex = new THREE.CanvasTexture(tile); tex.wrapS = tex.wrapT = THREE.RepeatWrapping; tex.repeat.set(14,9); tex.colorSpace = THREE.SRGBColorSpace;
@@ -141,14 +140,43 @@ function hall({floor=[0xe6e3db,0xdad6cc], wall=0xf3f1ec, band=0x2a78d6, walls=tr
     scene.add(box(28.6,0.7,0.6,band,0,6.15,-9.1));
   }
 }
-function trees(n=26, hue=0.33){
-  for (let i=0;i<n;i++){ const t = rnd()*Math.PI*2, k = 1.22 + rnd()*0.95, x = 30*k*Math.cos(t), z = 24*k*Math.sin(t);
+function trees(n=34, hue=0.33){
+  for (let i=0;i<n;i++){ const x = -78+rnd()*156, back = rnd()>0.45, z = back ? -34+rnd()*20 : 28+rnd()*22;
     const tr = new THREE.Group(), h = 1.6+rnd()*1.6, leaf = new THREE.Color().setHSL(hue+rnd()*0.04,0.5,0.24+rnd()*0.07);
     tr.add(box(0.45,1.3,0.45,0x6b4a33,0,0.65,0));
     const cone = new THREE.Mesh(new THREE.ConeGeometry(1.5,h*1.9,8), mat(leaf)); cone.position.y = 1.3+h*0.85; cone.castShadow = true; tr.add(cone);
     tr.position.set(x,0,z); scene.add(tr); }
 }
-function ell(a,b,n=96,rev=false){ const p=[]; for(let i=0;i<=n;i++){const t=i/n*Math.PI*2; p.push(new THREE.Vector2(a*Math.cos(t), (rev?-1:1)*b*Math.sin(t)));} return p; }
+
+// ---------- site builders: the places a vehicle travels between ----------
+const SX = -42, DX = 42;                       // source and destination centres along the road
+const slab = (cx,cz,w,d,color,y=0.03) => { const m = box(w,0.06,d,color,cx,y,cz,{noShadow:true}); m.receiveShadow = true; scene.add(m); return m; };
+function siteLabel(text, x, z, y=10){ const s = label(text,{size:2.2,bg:'rgba(20,32,46,.86)',color:'#ffffff',edge:'rgba(0,0,0,0)'}); s.position.set(x,y,z); scene.add(s); }
+function house(x,z,wall=0xf4efe6,roof=0xb5543c){
+  const g = new THREE.Group(); g.add(box(3,2.2,3,wall,0,1.1,0), box(0.7,1.3,0.1,0x6b4a33,0,0.65,1.55), box(0.8,0.7,0.1,0x9fd3ee,-0.9,1.4,1.55,{glow:0x8ccbe8}));
+  const r = new THREE.Mesh(new THREE.ConeGeometry(2.6,1.6,4), mat(roof)); r.position.y = 3.0; r.rotation.y = Math.PI/4; r.castShadow = true; g.add(r);
+  g.position.set(x,0,z); scene.add(g);
+}
+function neighborhood(cx, text){
+  slab(cx,0,28,20,0xb9cf9c);
+  const walls = [0xf4efe6,0xf1e3c9,0xe6edf4,0xf3d9cf], roofs = [0xb5543c,0x7a5a4a,0x4b6a8a,0x8a4b4b];
+  for (let r=0;r<2;r++) for (let c=0;c<4;c++) house(cx-10.5+c*7, -4.5+r*9, walls[(r+c)%4], roofs[(r*2+c)%4]);
+  siteLabel(text, cx, 0, 8);
+}
+function warehouse(cx, {w=24,d=16,h=7,wall=0xdfe3e8,roof=0x8693a8,band=0x2a78d6,doors=[]}={}){
+  slab(cx,1,w+6,d+8,0xc9ccce);
+  scene.add(box(w,h,d,wall,cx,h/2,0), box(w+0.6,0.4,d+0.6,roof,cx,h+0.2,0), box(w+0.1,0.9,d+0.1,band,cx,h-1.3,0));
+  doors.forEach(x=>{ scene.add(box(3.4,3.8,0.2,0x8693a8,x,1.9,d/2+0.05)); for (let k=0;k<5;k++) scene.add(box(3.4,0.06,0.22,0x6b7688,x,0.6+k*0.7,d/2+0.06,{noShadow:true})); });
+}
+function container(x,y,z,color,rot=0){ const c = box(3.6,1.5,1.5,color,x,y,z); c.rotation.y = rot; scene.add(c); return c; }
+function silo(x,z,h=7,color=0xdfe3e8){ scene.add(cyl(1.5,1.5,h,color,x,h/2,z,{seg:18}), cyl(0.2,1.5,1.4,0x8693a8,x,h+0.7,z,{seg:18})); }
+function mast(x,z,h=9){ scene.add(cyl(0.12,0.2,h,0x8693a8,x,h/2,z,{seg:8}), box(1.2,0.2,0.2,0x8693a8,x,h-1.2,z), ball(0.3,0xff4d4d,x,h+0.2,z,{glow:0xff4d4d})); }
+function crane(x,z){ for (const dx of [-2.6,2.6]) scene.add(box(0.3,9,0.3,0xf2a31b,x+dx,4.5,z)); scene.add(box(9,0.4,0.5,0xf2a31b,x,9.2,z), box(0.8,1.2,0.8,0x33415a,x+1,8.2,z)); }
+function glassBlock(x,z,w,h,d,color=0xa9bdd2){ scene.add(box(w,h,d,color,x,h/2,z)); for (let y=1.2;y<h;y+=1.1) scene.add(box(w+0.04,0.45,d+0.04,0x2f4560,x,y,z,{noShadow:true})); scene.add(box(w+0.2,0.3,d+0.2,0x8693a8,x,h+0.15,z)); }
+function pylon(x,z,h=11){ for (const dx of [-0.6,0.6]) for (const dz of [-0.6,0.6]) scene.add(box(0.12,h,0.12,0x8693a8,x+dx*0.6,h/2,z+dz*0.6)); for (const y of [h-1,h-2.8]) scene.add(box(5,0.15,0.15,0x8693a8,x,y,z)); }
+function wires(x0,x1,z,h=11){ for (const dy of [-1,-2.8]) scene.add(box(Math.abs(x1-x0),0.04,0.04,0x20242c,(x0+x1)/2,h+dy,z,{noShadow:true})); }
+function cropField(cx,cz,w,d,color=0x6fae4a){ slab(cx,cz,w,d,0x8a6a45,0.03); for (let k=0;k<Math.floor(d/1.6);k++) slab(cx,cz-d/2+0.8+k*1.6,w-1,0.7,color,0.06); }
+function solarRow(cx,cz,n){ for (let i=0;i<n;i++){ const p = box(3,0.12,1.6,0x2a4f8c,cx+i*3.4,1.1,cz); p.rotation.x = -0.5; scene.add(p, box(0.1,1,0.1,0x8693a8,cx+i*3.4,0.5,cz+0.2)); } }
 
 // ---------- interaction registry ----------
 const interactive = [];
@@ -162,19 +190,19 @@ function finalize(g, text, labelSize=0.9){
   g.updateMatrixWorld(true);
   const b = new THREE.Box3().setFromObject(g), sz = b.getSize(new THREE.Vector3()), c = b.getCenter(new THREE.Vector3());
   const hit = new THREE.Mesh(new THREE.BoxGeometry(sz.x+0.2,sz.y+0.2,sz.z+0.2), new THREE.MeshBasicMaterial({visible:false})); hit.position.copy(c); g.add(hit);
-  const lb = label(text,{size:labelSize}); lb.position.set(c.x, b.max.y+0.7, c.z); g.add(lb);
+  const lb = label(text,{size:labelSize*1.3}); lb.position.set(c.x, b.max.y+0.8, c.z); g.add(lb);
 }
 
-// ---------- ground, ring road, clouds ----------
-const ground = new THREE.Mesh(new THREE.CircleGeometry(170,64), mat(KIT.ground,{roughness:1}));
+// ---------- ground, straight road, clouds ----------
+const ground = new THREE.Mesh(new THREE.CircleGeometry(320,64), mat(KIT.ground,{roughness:1}));
 ground.rotation.x = -Math.PI/2; ground.position.y = -0.02; ground.receiveShadow = true; scene.add(ground);
-{ const R = KIT.ring, shape = new THREE.Shape(ell(30,24)); shape.holes.push(new THREE.Path(ell(20,14,96,true)));
-  const road = new THREE.Mesh(new THREE.ShapeGeometry(shape,48), mat(R.road,{roughness:1}));
-  road.rotation.x = -Math.PI/2; road.position.y = 0.01; road.receiveShadow = true; scene.add(road);
-  KIT.env();
-  for (let k=0;k<5;k++){ const a=22.2+k*1.6, b=16.2+k*1.6, n=Math.round(a*4);
-    for(let i=0;i<n;i+=2){ const t=i/n*Math.PI*2; const d = box(0.7,0.02,0.08,R.dash,a*Math.cos(t),0.03,b*Math.sin(t),{noShadow:true});
-      d.rotation.y = Math.atan2(-b*Math.cos(t), -a*Math.sin(t)); scene.add(d);} } }
+const LANE0 = 12.3, LANE_GAP = 1.6, ROUTE = KIT.route || {x0:SX, x1:DX};
+{ const R = KIT.road;
+  const road = box(140,0.1,12.4,R.color,0,0,17.2,{noShadow:true,roughness:1}); road.receiveShadow = true; scene.add(road);
+  slab(0,9.9,140,2.4,0xd9d6cd,0.04); slab(0,24.8,140,2,0xd9d6cd,0.04);
+  const dg = new THREE.BoxGeometry(0.9,0.02,0.09), dm = mat(R.dash,{roughness:1});
+  for (let k=0;k<5;k++) for (let x=-68;x<68;x+=2.2){ const d = new THREE.Mesh(dg,dm); d.position.set(x,0.07,LANE0+LANE_GAP*(k+0.5)); scene.add(d); }
+  KIT.hero(); KIT.source(); KIT.dest(); }
 const clouds = [];
 for (let i=0;i<6;i++){ const g = new THREE.Group();
   for (let j=0;j<4;j++){ const s = new THREE.Mesh(new THREE.SphereGeometry(2.4+rnd()*1.8,12,10), new THREE.MeshStandardMaterial({color:0xffffff,roughness:1,emissive:0xffffff,emissiveIntensity:0.35}));
@@ -217,12 +245,13 @@ fixtures.forEach((it,i)=>{
 });
 
 const terminals = SL.terminals ? prep(SL.terminals).slice(0,4) : [];
+const TA = KIT.terminalAt || {x:5.2,z:5.3,dx:1.8,y:0.3};
 if (terminals.length && KIT.terminalBase) KIT.terminalBase();
 terminals.forEach((it,i)=>{
   const g = KIT.terminal(it);
   finalize(g, it.short, 0.5);
   g.children[g.children.length-1].position.y += (i%2)*0.6;   // stagger labels so neighbours don't overlap
-  g.position.set(5.2+i*1.8, KIT.terminalY ?? 0.3, 5.3);
+  g.position.set(TA.x+i*TA.dx, TA.y, TA.z);
   register(g, cardFor(SL.terminals, it, `${W.terminal} · ${SL.terminals.label}`), 0.8);
 });
 
@@ -239,7 +268,8 @@ const maxSpd = Math.max(1, ...movers.map(m=>m.speed ?? m.size));
 const moverObjs = movers.map((it,i)=>{
   const g = KIT.mover(it);
   finalize(g, it.tag ? `${it.short}  ${it.tag}` : it.short, 0.75);
-  g.userData.van = {a:21.4+i*1.6, b:15.4+i*1.6, th:i*1.05, w:0.04+0.08*((it.speed ?? it.size)/maxSpd), lift:KIT.moverLift||0};
+  const L = ROUTE.x1 - ROUTE.x0;
+  g.userData.run = {z:LANE0+LANE_GAP*i, s:((i*0.37)%1)*L, L, dir:i%2 ? -1 : 1, rot:0, pause:0, sp:3.5+7*((it.speed ?? it.size)/maxSpd), lift:KIT.moverLift||0};
   register(g, cardFor(SL.movers, it, `${W.mover} · ${SL.movers.label}`), 0.9);
   return g;
 });
@@ -281,7 +311,7 @@ $('kpis').innerHTML = D.kpis.map(k=>`<div class="kpi glass"><b>${fmt(k.value,k.f
   if (actorGroups.length) hs.push(`<h3>${W.actor} = ${SL.actors.label}</h3><div class="row">${actorGroups.map((a,i)=>`<span><i style="background:${PAL[i]}"></i>${a.name}</span>`).join('')}</div>`);
   const hints = [];
   if (fixtures.length) hints.push(`${W.fixtureHint} = more ${SL.fixtures.sizeLabel}.`);
-  if (movers.length) hints.push(`${W.moverHint} = more ${SL.movers.sizeLabel}.`);
+  if (movers.length) hints.push(`${W.moverHint} = more ${SL.movers.sizeLabel}. ${W.mover}s run between ${KIT.from} and ${KIT.to}.`);
   hs.push(`<p>${hints.join(' ')}</p>`);
   $('legend').innerHTML = hs.join(''); }
 
@@ -330,8 +360,11 @@ const clock = new THREE.Clock(); const ease = t => t<.5 ? 2*t*t : 1-Math.pow(-2*
 const lastFocus = new THREE.Vector3(); let haveFocus = false;
 renderer.setAnimationLoop(()=>{
   const dt = Math.min(clock.getDelta(),0.05), now = clock.elapsedTime, mv = reduceMotion ? 0 : 1;
-  moverObjs.forEach(g=>{ const v = g.userData.van; v.th += v.w*dt*mv;
-    g.position.set(v.a*Math.cos(v.th),0.01+v.lift,v.b*Math.sin(v.th)); g.rotation.y = Math.atan2(-v.b*Math.cos(v.th), -v.a*Math.sin(v.th)); });
+  moverObjs.forEach(g=>{ const u = g.userData.run;
+    if (u.pause > 0) u.pause -= dt;
+    else { u.s += u.dir*u.sp*dt*mv; if (u.s >= u.L){ u.s = u.L; u.dir = -1; u.pause = 1.4; } else if (u.s <= 0){ u.s = 0; u.dir = 1; u.pause = 1.4; } }
+    u.rot += ((u.dir > 0 ? 0 : Math.PI) - u.rot) * Math.min(1, dt*4);
+    g.position.set(ROUTE.x0 + u.s, 0.05 + u.lift, u.z); g.rotation.y = u.rot; });
   walkers.forEach(w=>{
     const d = w.tgt.clone().sub(w.g.position); d.y = 0;
     if (d.length() < 0.15) w.tgt.set(w.z[0]+rnd()*(w.z[1]-w.z[0]), 0.3, w.z[2]+rnd()*(w.z[3]-w.z[2]));

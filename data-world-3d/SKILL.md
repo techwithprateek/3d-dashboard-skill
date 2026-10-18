@@ -21,11 +21,11 @@ Pass a data file (or a Kaggle dataset name) and say what it is about. Everything
 
 1. **Get the data.** A local file, a URL, or a Kaggle dataset (`kaggle datasets download -d owner/name -p DIR --unzip`). Put downloads in their own new folder. If the user gave nothing, ask for a file or offer a public sample.
 2. **Profile it.** `python3 scripts/profile_data.py DATA` prints columns, measures, dimensions and a domain guess.
-3. **Pick the domain kit.** Read `references/domains.md`. Retail, datacenter, healthcare, factory, city, hospitality, education, energy. Logistics and supply chain use `factory`. Finance, real estate and anything unclear use `city`. Say which kit you chose and why in one line.
+3. **Pick the domain kit.** Every kit is a linear chain of three places along one road: a source site, the main site (where fixtures and people live) and a destination, with the movers shuttling back and forth. Read `references/domains.md`. Retail, datacenter, healthcare, factory, city, hospitality, education, energy. Logistics and supply chain use `factory`. Finance, real estate and anything unclear use `city`. Say which kit you chose and why in one line.
 4. **Map the data to the world.** Four slots, each needs one categorical column:
    - `fixtures` (up to 8): the main things the business holds. Products, wards, services, machines, funds.
    - `movers` (up to 6): flows or places. Regions, channels, routes, sources.
-   - `terminals` (up to 4): process steps or methods. Ship mode, payment type, triage level.
+   - `terminals` (up to 4): process steps or methods. Ship mode, payment type, triage level. In retail they become dock bays at the warehouse.
    - `actors` (up to 4 groups, 17 people): the people. Customer segments, patient types, user tiers.
    Plus one **health metric**: the single number that says good or bad (margin, readmission rate, churn, defect rate). It colors the world red to blue. Set `good` to `high` or `low` correctly.
 5. **Find the story.** Use pandas to find one or two real findings (where health is negative, what correlates with it). Put them in `story` and `notes`. State only what the data shows.
@@ -46,7 +46,7 @@ Pass a data file (or a Kaggle dataset name) and say what it is about. Everything
 ## Files
 
 - `assets/engine.js`: the world engine (camera, cards, legend, picking, motion)
-- `assets/kits.js`: the 8 domain kits. To add a domain, add a kit with `sky, ground, ring, words, env, fixture, mover, terminal, landmark`
+- `assets/kits.js`: the 8 domain kits. To add a domain, add a kit with `sky, ground, road, from, to, words, hero, source, dest, terminalAt, fixture, mover, terminal, landmark`
 - `assets/template.html`: page shell and styles
 - `scripts/build_world.py`: aggregates the data and writes the HTML
 - `scripts/profile_data.py`, `scripts/smoke_test.mjs`: profiling and a browserless runtime check
