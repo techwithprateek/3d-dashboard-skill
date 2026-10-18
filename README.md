@@ -54,7 +54,15 @@ Use data-world-3d on my-data.csv
 
 **3. Open** the `my-data-3d.html` file it creates in any browser. Click anything.
 
-You need Python 3.9+ with pandas (`pip install pandas`, plus `openpyxl` for Excel files) and a browser with an internet connection. Not using Claude Code? See [Install options](#install-options).
+You need Python 3.9+ with pandas (`pip install pandas`, plus `openpyxl` for Excel files) and a browser with an internet connection.
+
+**No git, or only Claude Desktop?** You do not need either:
+
+1. Download [`data-world-3d.zip`](https://github.com/techwithprateek/3d-dashboard-skill/raw/main/data-world-3d.zip).
+2. In Claude Desktop, open **Settings → Capabilities → Skills** and upload the zip.
+3. Attach your data file and ask: "Turn this into a 3D world with the data-world-3d skill."
+
+Claude builds the page in its own sandbox. Download the HTML file it makes and open it in your browser. Details are under [Install options](#install-options).
 
 ## What it does
 
@@ -135,19 +143,21 @@ The folder must be named `data-world-3d`.
 </details>
 
 <details>
-<summary><b>Claude Desktop and claude.ai</b></summary>
+<summary><b>Claude Desktop and claude.ai (no git needed)</b></summary>
 
 &nbsp;
 
-1. Clone the repo, then zip **only the skill files**, not the whole checkout:
-   ```bash
-   git clone https://github.com/techwithprateek/3d-dashboard-skill.git data-world-3d
-   cd data-world-3d
-   zip -r ../data-world-3d.zip SKILL.md assets scripts references examples
-   ```
+1. Download [`data-world-3d.zip`](https://github.com/techwithprateek/3d-dashboard-skill/raw/main/data-world-3d.zip). It is a ready-made upload with only the skill files.
 2. Open **Settings → Capabilities → Skills** and upload `data-world-3d.zip`. Menu names change from time to time, so look for the Skills section.
 3. Turn on code execution and file creation. The skill runs Python to aggregate your data.
 4. Attach your data file and ask: "Turn this into a 3D world with the data-world-3d skill." Download the HTML file Claude creates and open it in your browser.
+
+Prefer to build the zip yourself from a clone? From the repo folder:
+
+```bash
+mkdir -p /tmp/pack/data-world-3d && cp -R SKILL.md assets scripts references examples /tmp/pack/data-world-3d/
+cd /tmp/pack && zip -r data-world-3d.zip data-world-3d
+```
 
 </details>
 
@@ -347,6 +357,7 @@ node scripts/smoke_test.mjs my-world.html
 ├── examples/
 │   ├── superstore.spec.json
 │   └── superstore-3d.html
+├── data-world-3d.zip             # ready-made upload for Claude Desktop and claude.ai
 ├── docs/                         # README images
 ├── README.md
 └── LICENSE
@@ -388,6 +399,8 @@ done
 
 Every line should print `OK`. Then open the page and look at it, because the smoke test cannot see overlaps or odd colors. Please include a screenshot in your pull request.
 
+If you change the skill files, rebuild `data-world-3d.zip` so Claude Desktop users get the update. It holds `SKILL.md`, `assets`, `scripts`, `references` and `examples` inside one `data-world-3d/` folder.
+
 </details>
 
 ## Troubleshooting
@@ -413,7 +426,7 @@ The first run installs `three@0.160.0` into a temporary folder so it can run the
 The default view shows the whole chain, so labels are small. Click an object or scroll to zoom in, and the labels scale up.
 
 **Claude says the zip contains too many files**
-You zipped the whole checkout, including `.git` and the README images. Zip only `SKILL.md assets scripts references examples`, about a dozen files.
+You zipped the whole checkout, including `.git` and the README images. Use the ready-made `data-world-3d.zip` instead, which has only the 11 skill files.
 
 **The world shows my top 8 only**
 That is by design. Each slot shows the top groups, and the rest are left out. Raise `top` in the spec for vehicles or desks, or use `rank_by` to choose what counts as top.
