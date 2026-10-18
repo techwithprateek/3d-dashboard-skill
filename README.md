@@ -420,14 +420,6 @@ That is by design. Each slot shows the top groups, and the rest are left out. Ra
 
 </details>
 
-## Credits
-
-The idea of turning a business into a clickable 3D world comes from a reel by [@nocode.joshua](https://www.instagram.com/nocode.joshua/). The sample data is the [Sample Superstore dataset](https://www.kaggle.com/datasets/vivek468/superstore-dataset-final) on Kaggle. The 3D engine is [three.js](https://threejs.org). The red to blue scale and the segment colors come from a palette checked for color-vision differences.
-
-## Star history
-
-[![Star History Chart](https://api.star-history.com/svg?repos=techwithprateek/3d-dashboard-skill&type=Date)](https://star-history.com/#techwithprateek/3d-dashboard-skill&Date)
-
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
